@@ -243,6 +243,9 @@ class JmModuleConfig:
     FLAG_DECODE_URL_WHEN_LOGGING = True
     # 当内置的版本号落后时，使用最新的禁漫app版本号
     FLAG_USE_VERSION_NEWER_IF_BEHIND = True
+    # 当正则匹配异常时，将响应文本持久化到文件，方便debug定位解析失败原因
+    # 文件会保存在当前工作目录下的 jmcomic_debug/ 中，路径会打印在异常信息中
+    FLAG_DUMP_HTML_ON_REGEX_ERROR = False
 
     # 关联dir_rule的自定义字段与对应的处理函数
     # 例如:

@@ -476,12 +476,19 @@ class JmHtmlClient(AbstractJmClient):
         请求如果失败，统一由该方法抛出异常
         """
         if msg is None:
+            msg_tail = '' if JmModuleConfig.FLAG_DUMP_HTML_ON_REGEX_ERROR else '，可通过设置 JmModuleConfig.FLAG_DUMP_HTML_ON_REGEX_ERROR = True 将响应文本保存到文件'
             msg = f"请求失败，" \
                   f"响应状态码为{resp.status_code}，" \
                   f"URL=[{resp.url}]，" \
                   + (f"响应文本=[{resp.text}]" if len(resp.text) < 200 else
-                     f'响应文本过长(len={len(resp.text)})，不打印'
+                     f'响应文本过长(len={len(resp.text)})，不打印{msg_tail}'
                      )
+
+            # 当 flag 开启时，将过长的响应文本持久化到文件，方便debug
+            if len(resp.text) >= 200 and JmModuleConfig.FLAG_DUMP_HTML_ON_REGEX_ERROR:
+                dump_path = ExceptionTool.dump_html_to_file(resp.text, msg)
+                if dump_path is not None:
+                    msg += f'\n已将响应文本持久化到文件: [{dump_path}]'
 
         ExceptionTool.raises_resp(msg, resp)
 
